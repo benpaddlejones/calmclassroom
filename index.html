@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Calm Classroom Timer & Tasks</title>
+<style>
+#timeremaining {
+   -webkit-transition: opacity 0.5s ease-in-out;
+   -moz-transition: opacity 0.5s ease-in-out;
+   -ms-transition: opacity 0.5s ease-in-out;
+   -o-transition: opacity 0.5s ease-in-out;
+   transition: opacity 0.5s ease-in-out;
+}
+#timeremaining {font-size:1.8em;}
+.whitebackground {background-color:#fff;border-radius:0px 0px 5px 5px;width:30vw;padding:20px;position:relative;margin-left:-20px}
+#legalinfo {display:none;height:100%;font-size:0.75em}
+#legalinfo img {height:25px;width:auto}
+#legalinfo h4 {margin: 0px}
+.strike{ text-decoration: line-through!important}
+body {font-family:Courier;overflow: hidden;background-color:#fff!important;margin:0px}
+body::backdrop {background:#fff!important}
+webkit-full-screen::backdrop {background:#fff!important}
+.sliderText {height:26px;display: table; margin:10px}
+#settings span,
+h3 {vertical-align: middle!important;display: table-cell!important;}
+#settings {float: right;position:absolute; top:60px;right:10px;z-index:99;background-color:#fff;border:1px solid #333;display:none;width:57.5vw}
+em {font-size:0.75em}
+#left li {font-size:2.3em}
+#left {height:100vh;width:43vw;float:left;padding:20px;margin:auto}
+#left ol {margin-inline-start: 3em;}
+#right {height:100vh;width:53vw;float:right;padding:0px;margin:0px;background-color:#2C3E50;text-align:center;}
+.box {
+  width:30vw;
+  height:30vw;
+  background:#FFF;
+  border-radius:5px 5px 0px 0px;
+  display:inline-block;
+  margin:6em 0 2em;
+  padding:20px 20px 20px;
+}
+.box span,
+.date #daymonth {
+  color:#454545;
+  font-size:2em;
+  padding:10px 0;
+}
+.date #year {
+  color:#C1C1C1;
+  font-size:2em;
+}
+#drawCircle svg {
+  display: block;
+  width:400px;
+  height: 400px;
+}
+#loader 
+{ fill: #00FFFF }
+#border 
+{ fill: #00FFFF }
+.settingsgear {
+position:absolute;right:10px;top:10px}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+.switch input { 
+  opacity: 0; 
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color: #2196F3;
+}
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+
+#toDoList {display:block!important}
+
+</style>
+<link rel="stylesheet" type="text/css" href="src/jquery-clockpicker.min.css">
+</head>
+<body id="fullscreenBody">
+<script type="text/javascript" src="src/jquery.min.js"></script>
+<script type="text/javascript" src="src/jquery-clockpicker.min.js"></script>
+<div id="settings">
+<div id="settingsHide">
+        <div class="sliderText"><label class="switch">
+  <input type="checkbox" id='specificTime' checked onclick='toggleTimer()'/>
+  <span class="slider round"></span>
+</label>&nbsp;<h3>Count down for a specific time</h3></div>
+<div class="sliderText">
+        <label class="switch">
+  <input type="checkbox" id='endSpecificTime' onclick='toggleTimer()'/>
+  <span class="slider round"></span>
+</label>&nbsp;<h3>Count down to end at a specific time</h3></div>
+<div class="sliderText form-group">
+		<div class="input-group clockpicker">
+    <input id="timePicker" type="text" class="form-control" value="00:00">
+    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+    </span><span style="color:blue" id="messageText"></span>
+</div>
+<script type="text/javascript">
+$('.clockpicker').clockpicker({
+    placement: 'bottom',
+    align: 'left',
+    donetext: 'Select'
+});
+</script>
+
+        </div>
+		<div class="sliderText">Timer ends: <strong id="htmlHour"></strong>:<strong id="htmlMinutes"></strong></div>
+		<div id="buttons" class="sliderText"><input  id="startButton" type="button" value="Start Timer" onclick="startTimer();"/>&nbsp;<input  id="pauseButton" type="button" value="Pause Timer" onclick="pauseTimer();"/></div>
+		<em style="margin-left:10px">Note: this will will close the settings panel and enter fullscreen mode.</em>
+		<hr>
+		<div class="sliderText"><label class="switch"><input type="checkbox" checked id='deleteType' onclick='deleteOrStrike()'/><span class="slider round"></span></label>&nbsp;<h3>Delete task instead of <span style="display:inline!important" class="strike">strike through</span> task</h3></div>
+		<em style="margin-left:10px">Note: Click on an exiting task to perform this action.</em>
+		<div class="sliderText"><label class="switch"><input type="checkbox" checked onclick='toggleEndBell()'/><span class="slider round"></span></label>&nbsp;<h3>Play bell at end</h3><span>&nbsp;(<a style="color:blue" onclick="playEndBell()">Play sound</a>)</span></div>
+		<div class="sliderText"><label class="switch"><input type="checkbox" checked onclick='toggleWarningBell()'/>&nbsp;<span class="slider round"></span></label>&nbsp;<h3>Play warning bell&nbsp;</h3><input style="width:45px;transform: translateY(8px)" type="number" min="1" max="99" id="warningTime" value="5"/><h3>&nbsp;minutes before end</h3><span>&nbsp;(<a style="color:blue" onclick="playWarningBell()">Play sound</a>)</span></div>
+		<div class="sliderText"><label class="switch"><input type="checkbox" id='hideTimer' onclick='toggleTimerView()'/><span class="slider round"></span></label>&nbsp;<h3>Hide timer</h3></div>
+		<div class="sliderText"><label class="switch"><input type="checkbox" id='hideTimer' onclick='toggleListView()'/><span class="slider round"></span></label>&nbsp;<h3>Hide list</h3></div>
+		<div class="sliderText"><label class="switch"><input type="checkbox" id='changeFont' onclick='toggleSansFont()'/><span class="slider round"></span></label>&nbsp;<h3>Sans serif font (for accessibility)</h3></div>
+		<hr>
+		<p class="sliderText">Toggle full Screen MAC: Command + Control + F</p>
+		<p class="sliderText">Toggle full screen PC: F11</p>
+		<hr>
+		</div>
+		<div class="sliderText" id="legalinfo">
+			<h4>Copyright <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png"></a></h4>
+			<span>This work is licensed under a </span><a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
+			<h4>Accessability <a href="https://www.w3.org/WAI/WCAG2AAA-Conformance" title="Explanation of WCAG 2.0 Level Triple-A Conformance"> <img height="32" width="88" src="https://www.w3.org/WAI/wcag2AAA" alt="Level Triple-A conformance, W3C WAI Web Content Accessibility Guidelines 2.0"></a></h4>
+			<span style="display:block">Conformance Level “AAA”: all Level A, AA, and AAA success criteria are satisfied for this page and the email signatures it produces.</span>
+				<hr>
+		<a href="https://www.benpaddlejones.com/contact/" target="blank">Contact the designer</a>
+		</div>
+		<div style="text-align:center;"><input type="button" id="hidelegalbutton" value="Show legal information" onclick="hidelegalinfo();"/></div>
+		<br>
+</div>
+<div id="left">
+  <div class="date">
+    <span id="daymonth"></span><span>, </span><span id="year"></span>
+  </div>
+ <div id="listDiv">
+<h1>Todays tasks:</h1>
+  <ol id="toDoList"></ol>
+<hr>
+<input type="text" id="newListItemInput" value="Type here to add a task" onmouseover="modifyButton()" onclick="modifyButton()"=/>
+<input  id="addButton" type="button" value="Add an item" onclick="addNewListItem();"/>
+<ol id="toDoList"></ol>
+</div>
+</div>
+<div id="right">
+<img class="settingsgear" src="gear.png" width="50" height="50" onclick="changeSettings();"/>
+<div class="box">
+<svg id="drawCircle" viewbox="0 0 400 400">
+  <path id="border" transform="translate(200, 200)"/>
+  <path id="loader" transform="translate(200, 200) scale(.84)"/>
+</svg>
+<div class="whitebackground">
+<div id="timeremaining">Click the settings cog to configure the timer and tasks.</div>
+</div>
+</div>
+</div>
+
+</body>
+<script id="jsFile" src="script.js"></script>
+</html>
+
