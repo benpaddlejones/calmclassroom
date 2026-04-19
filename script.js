@@ -22,15 +22,18 @@ var buttonModified = false;
 var toggleFont = false;
 var timerView = false;
 var listView = false;
-var endDate;
-var startDate;
+var endDate = new Date();
+var startDate = new Date();
+var totalDurationMs = 0;
+var pauseStartTime = 0;
+var totalPausedMs = 0;
 var fullScreen = document.getElementById("fullscreenBody");
 var n1 = true;
 var date = new Date(),
     year = date.getFullYear(),
     month = date.getMonth(),
     day = date.getUTCDate(),
-    months = [ "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var loader = document.getElementById('loader'),
    border = document.getElementById('border'),
    α = 0,
@@ -43,12 +46,15 @@ document.getElementById("year").innerHTML = year;
 
 function pauseTimer() {
 	if (timerPaused) {
-	document.getElementById("pauseButton").value = "Pause Timer"
+		// Resuming: accumulate paused duration
+		totalPausedMs += Date.now() - pauseStartTime;
+		document.getElementById("pauseButton").value = "Pause Timer";
 	} else {
-	document.getElementById("pauseButton").value = "Restart Timer"
+		// Pausing: record when pause started
+		pauseStartTime = Date.now();
+		document.getElementById("pauseButton").value = "Restart Timer";
 	}
-	timerPaused = !timerPaused
-	
+	timerPaused = !timerPaused;
 }
 
 function openFullscreen() {
@@ -90,43 +96,39 @@ function hidelegalinfo() {
 };
 
 function startTimer() {
-	if (timerStarted || startDate.toLocaleTimeString() >= endDate.toLocaleTimeString())	{
-		if (startDate.toLocaleTimeString() >= endDate.toLocaleTimeString() || document.getElementById("timePicker").value == "00:00" )	{
-		document.getElementById("messageText").innerHTML = "Please pick a time in the future";
-		}
-		clearTimer ()
+	// If timer is already running, stop it
+	if (timerStarted) {
+		clearTimer();
 		return;
 	}
-	warningBellPlayed = true;
-	timerPaused = true;
-	pauseTimer();
+
+	timePickerTime();
+
+	// Validate: end time must be in the future and not 00:00
+	if (endDate.getTime() <= startDate.getTime() || document.getElementById("timePicker").value == "00:00") {
+		document.getElementById("messageText").innerHTML = "Please pick a time in the future";
+		return;
+	}
+
+	warningBellPlayed = false;
+	timerPaused = false;
+	totalPausedMs = 0;
 	n1 = true;
 	timerEnded = false;
+	α = 0;
+	document.getElementById("pauseButton").value = "Pause Timer";
 	document.getElementById("messageText").innerHTML = "";
 	document.getElementById("newListItemInput").value = "";
 	openFullscreen();
 	changeSettings();
 	document.getElementById("startButton").value = "Stop Timer";
 	timerStarted = true;
-	timePickerTime ();
-	startDate = new Date()
-	endDate = new Date()
-	endDate.setHours( countDownHour );
-	endDate.setMinutes( countDownMinutes );
-	endDate.setSeconds (0);
-	warningBellPlayed = false;
-		if (toggleCountDown) {
-	var tt = endDate.getHours() - startDate.getHours()
-	t = tt * 60 * 167
-	tt = endDate.getMinutes() - startDate.getMinutes()
-	t += tt * 167
-	tt = endDate.getSeconds() - startDate.getSeconds()
-	t+= tt / 60 * 167
-	} else {
-		t = countDownHour * 60 * 167.5
-		t += countDownMinutes * 167.5
-	}	
-	draw()
+
+	// Store total duration and start time for wall-clock calculation
+	startDate = new Date();
+	totalDurationMs = endDate.getTime() - startDate.getTime();
+
+	draw();
 }
 
 function timePickerTime () {
@@ -146,31 +148,38 @@ function timePickerTime () {
 	
 }
   
-function draw() {
-	if (!timerPaused) {
-  α++;
-	}
-  α %= 361;
-  var r = ( α * π / 180 )
-    , x = Math.sin( r ) * 200
-    , y = Math.cos( r ) * - 200
-    , mid = ( α > 180 ) ? 1 : 0
-    , anim = 'M 0 0 v -200 A 200 200 1 ' 
-           + mid + ' 1 ' 
-           +  x  + ' ' 
-           +  y  + ' z';
-  loader.setAttribute( 'd', anim );
-  border.setAttribute( 'd', anim );
- 
-if ( α == 360) {
-	if (endBell) {
-		playEndBell()
-	}
-	clearTimer ()
-} else {
- drawTimer = setTimeout(draw, t); // Redraw
- updateRemainingTime ();
+function getElapsedMs() {
+	var now = Date.now();
+	var paused = totalPausedMs + (timerPaused ? (now - pauseStartTime) : 0);
+	return now - startDate.getTime() - paused;
 }
+
+function draw() {
+	// Calculate α from wall-clock elapsed time
+	var elapsed = getElapsedMs();
+	α = Math.min(360, Math.floor(360 * elapsed / totalDurationMs));
+
+	var r = ( α * π / 180 )
+		, x = Math.sin( r ) * 200
+		, y = Math.cos( r ) * - 200
+		, mid = ( α > 180 ) ? 1 : 0
+		, anim = 'M 0 0 v -200 A 200 200 1 '
+			   + mid + ' 1 '
+			   +  x  + ' '
+			   +  y  + ' z';
+	loader.setAttribute( 'd', anim );
+	border.setAttribute( 'd', anim );
+
+	if ( α >= 360 ) {
+		if (endBell) {
+			playEndBell();
+		}
+		clearTimer();
+	} else {
+		// Redraw ~60 times per second for smooth visuals
+		drawTimer = setTimeout(draw, 250);
+		updateRemainingTime();
+	}
 };
 
 function clearTimer () {
@@ -213,33 +222,33 @@ function playEndBell() {
 }
 
 function updateRemainingTime () {
-	timePickerTime ()
 	if (!timerStarted) {
-	document.getElementById("htmlHour").innerHTML = endDate.toLocaleTimeString();
+		timePickerTime();
+		document.getElementById("htmlHour").innerHTML = endDate.toLocaleTimeString();
+		return;
 	}
-	var timeR
-		timeR = t / 167
-		timeR *= 60
-		timeR = 360 / timeR
-		timeR = (360-α) / timeR
-		timeR /= 60	
-	var s;
-	if(Math.ceil(timeR) > 1 || t == 0 ) {s = "s"}else{s = ""}	
-	if (timerStarted) {
+
+	// Calculate remaining time from wall-clock elapsed time
+	var elapsed = getElapsedMs();
+	var remainingMs = Math.max(0, totalDurationMs - elapsed);
+	var timeR = remainingMs / 60000;
+
+	var s = (Math.ceil(timeR) > 1 || totalDurationMs == 0) ? "s" : "";
 	var createString = "Time Remaining: " + Math.ceil(timeR) + " Minute" + s;
 	if (createString != document.getElementById("timeremaining").innerHTML) {
-	document.getElementById("timeremaining").style.opacity = 0;
+		document.getElementById("timeremaining").style.opacity = 0;
+		setTimeout(function(){
+			if (createString != document.getElementById("timeremaining").innerHTML) {
+				document.getElementById("timeremaining").innerHTML = createString;
+				document.getElementById("timeremaining").style.opacity = 1;
+			}
+		}, 500);
 	}
-	setTimeout(function(){ 
-	if (createString != document.getElementById("timeremaining").innerHTML) {
-	document.getElementById("timeremaining").innerHTML = createString
-	document.getElementById("timeremaining").style.opacity = 1;
-	}
-	},500);
-	}
-	if (timeR == document.getElementById("warningTime").value && warningBell && !warningBellPlayed) {
-	warningBellPlayed = true;
-	playWarningBell()
+
+	// Trigger warning bell when remaining time drops to threshold
+	if (Math.ceil(timeR) <= Number(document.getElementById("warningTime").value) && warningBell && !warningBellPlayed) {
+		warningBellPlayed = true;
+		playWarningBell();
 	}
 }
 

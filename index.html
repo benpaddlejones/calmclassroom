@@ -115,11 +115,11 @@ input:checked + .slider:before {
 #toDoList {display:block!important}
 
 </style>
-<link rel="stylesheet" type="text/css" href="src/jquery-clockpicker.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/jquery-clockpicker.min.css">
 </head>
 <body id="fullscreenBody">
-<script type="text/javascript" src="src/jquery.min.js"></script>
-<script type="text/javascript" src="src/jquery-clockpicker.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/jquery-clockpicker.min.js"></script>
 <div id="settings">
 <div id="settingsHide">
         <div class="sliderText"><label class="switch">
@@ -156,7 +156,7 @@ $('.clockpicker').clockpicker({
 		<div class="sliderText"><label class="switch"><input type="checkbox" checked onclick='toggleEndBell()'/><span class="slider round"></span></label>&nbsp;<h3>Play bell at end</h3><span>&nbsp;(<a style="color:blue" onclick="playEndBell()">Play sound</a>)</span></div>
 		<div class="sliderText"><label class="switch"><input type="checkbox" checked onclick='toggleWarningBell()'/>&nbsp;<span class="slider round"></span></label>&nbsp;<h3>Play warning bell&nbsp;</h3><input style="width:45px;transform: translateY(8px)" type="number" min="1" max="99" id="warningTime" value="5"/><h3>&nbsp;minutes before end</h3><span>&nbsp;(<a style="color:blue" onclick="playWarningBell()">Play sound</a>)</span></div>
 		<div class="sliderText"><label class="switch"><input type="checkbox" id='hideTimer' onclick='toggleTimerView()'/><span class="slider round"></span></label>&nbsp;<h3>Hide timer</h3></div>
-		<div class="sliderText"><label class="switch"><input type="checkbox" id='hideTimer' onclick='toggleListView()'/><span class="slider round"></span></label>&nbsp;<h3>Hide list</h3></div>
+		<div class="sliderText"><label class="switch"><input type="checkbox" id='hideList' onclick='toggleListView()'/><span class="slider round"></span></label>&nbsp;<h3>Hide list</h3></div>
 		<div class="sliderText"><label class="switch"><input type="checkbox" id='changeFont' onclick='toggleSansFont()'/><span class="slider round"></span></label>&nbsp;<h3>Sans serif font (for accessibility)</h3></div>
 		<hr>
 		<p class="sliderText">Toggle full Screen MAC: Command + Control + F</p>
@@ -182,9 +182,8 @@ $('.clockpicker').clockpicker({
 <h1>Todays tasks:</h1>
   <ol id="toDoList"></ol>
 <hr>
-<input type="text" id="newListItemInput" value="Type here to add a task" onmouseover="modifyButton()" onclick="modifyButton()"=/>
+<input type="text" id="newListItemInput" value="Type here to add a task" onmouseover="modifyButton()" onclick="modifyButton()"/>
 <input  id="addButton" type="button" value="Add an item" onclick="addNewListItem();"/>
-<ol id="toDoList"></ol>
 </div>
 </div>
 <div id="right">
