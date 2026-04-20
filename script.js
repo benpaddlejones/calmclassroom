@@ -3,7 +3,7 @@ var listItemArrayStrike = []
 var arrayIndex = 0;
 var newItem = 0;
 var htmlString = "";
-var taskDeleteType = false;
+var taskDeleteType = true;
 var toggleCountDown = false;
 var endBell = true;
 var warningBell = true;
@@ -19,7 +19,7 @@ var timerStarted = false;
 var timerEnded = false;
 var timerPaused = false;
 var buttonModified = false;
-var toggleFont = false;
+var toggleFont = true;
 var timerView = false;
 var listView = false;
 var endDate = new Date();
@@ -71,9 +71,9 @@ function openFullscreen() {
 
 function toggleSansFont () {
 	if (toggleFont) {
-	document.getElementById('fullscreenBody').style.fontFamily = "Courier"		
+	document.getElementById('fullscreenBody').style.fontFamily = "'Roboto Slab', serif"		
 	} else {
-	document.getElementById('fullscreenBody').style.fontFamily = "Verdana"
+	document.getElementById('fullscreenBody').style.fontFamily = "'Roboto', sans-serif"
 	}
 	toggleFont = !toggleFont
 }

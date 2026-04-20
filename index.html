@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Calm Classroom Timer & Tasks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab&display=swap" rel="stylesheet">
 <style>
 #timeremaining {
    -webkit-transition: opacity 0.5s ease-in-out;
@@ -18,7 +21,7 @@
 #legalinfo img {height:25px;width:auto}
 #legalinfo h4 {margin: 0px}
 .strike{ text-decoration: line-through!important}
-body {font-family:Courier;overflow: hidden;background-color:#fff!important;margin:0px}
+body {font-family:'Roboto',sans-serif;overflow: hidden;background-color:#fff!important;margin:0px}
 body::backdrop {background:#fff!important}
 webkit-full-screen::backdrop {background:#fff!important}
 .sliderText {height:26px;display: table; margin:10px}
@@ -151,13 +154,13 @@ $('.clockpicker').clockpicker({
 		<div id="buttons" class="sliderText"><input  id="startButton" type="button" value="Start Timer" onclick="startTimer();"/>&nbsp;<input  id="pauseButton" type="button" value="Pause Timer" onclick="pauseTimer();"/></div>
 		<em style="margin-left:10px">Note: this will will close the settings panel and enter fullscreen mode.</em>
 		<hr>
-		<div class="sliderText"><label class="switch"><input type="checkbox" checked id='deleteType' onclick='deleteOrStrike()'/><span class="slider round"></span></label>&nbsp;<h3>Delete task instead of <span style="display:inline!important" class="strike">strike through</span> task</h3></div>
+		<div class="sliderText"><label class="switch"><input type="checkbox" id='deleteType' onclick='deleteOrStrike()'/><span class="slider round"></span></label>&nbsp;<h3>Delete task instead of <span style="display:inline!important" class="strike">strike through</span> task</h3></div>
 		<em style="margin-left:10px">Note: Click on an exiting task to perform this action.</em>
 		<div class="sliderText"><label class="switch"><input type="checkbox" checked onclick='toggleEndBell()'/><span class="slider round"></span></label>&nbsp;<h3>Play bell at end</h3><span>&nbsp;(<a style="color:blue" onclick="playEndBell()">Play sound</a>)</span></div>
 		<div class="sliderText"><label class="switch"><input type="checkbox" checked onclick='toggleWarningBell()'/>&nbsp;<span class="slider round"></span></label>&nbsp;<h3>Play warning bell&nbsp;</h3><input style="width:45px;transform: translateY(8px)" type="number" min="1" max="99" id="warningTime" value="5"/><h3>&nbsp;minutes before end</h3><span>&nbsp;(<a style="color:blue" onclick="playWarningBell()">Play sound</a>)</span></div>
 		<div class="sliderText"><label class="switch"><input type="checkbox" id='hideTimer' onclick='toggleTimerView()'/><span class="slider round"></span></label>&nbsp;<h3>Hide timer</h3></div>
 		<div class="sliderText"><label class="switch"><input type="checkbox" id='hideList' onclick='toggleListView()'/><span class="slider round"></span></label>&nbsp;<h3>Hide list</h3></div>
-		<div class="sliderText"><label class="switch"><input type="checkbox" id='changeFont' onclick='toggleSansFont()'/><span class="slider round"></span></label>&nbsp;<h3>Sans serif font (for accessibility)</h3></div>
+		<div class="sliderText"><label class="switch"><input type="checkbox" id='changeFont' checked onclick='toggleSansFont()'/><span class="slider round"></span></label>&nbsp;<h3>Sans serif font (for accessibility)</h3></div>
 		<hr>
 		<p class="sliderText">Toggle full Screen MAC: Command + Control + F</p>
 		<p class="sliderText">Toggle full screen PC: F11</p>
