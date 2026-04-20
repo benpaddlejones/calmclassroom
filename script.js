@@ -255,8 +255,9 @@ function updateRemainingTime () {
 		}, 500);
 	}
 
-	// Trigger warning bell when remaining time drops to threshold
-	if (Math.ceil(timeR) <= Number(document.getElementById("warningTime").value) && warningBell && !warningBellPlayed) {
+	// Trigger warning bell when remaining time drops to threshold (only if timer is longer than warning time)
+	var warningThreshold = Number(document.getElementById("warningTime").value);
+	if (Math.ceil(timeR) <= warningThreshold && (totalDurationMs / 60000) > warningThreshold && warningBell && !warningBellPlayed) {
 		warningBellPlayed = true;
 		playWarningBell();
 	}
