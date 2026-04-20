@@ -86,12 +86,14 @@ function toggleSansFont () {
 
 function hidelegalinfo() {
 	if(legalInfo) {
-	document.getElementById("legalinfo").style.display = "none";
-	document.getElementById("settingsHide").style.display = "block";
+	document.getElementById("legalinfo").classList.add("d-none");
+	document.getElementById("legalinfo").classList.remove("d-block");
+	document.getElementById("settingsHide").classList.remove("d-none");
 	document.getElementById("hidelegalbutton").value = "Show legal information";
 	} else {
-	document.getElementById("legalinfo").style.display = "block";
-	document.getElementById("settingsHide").style.display = "none";
+	document.getElementById("legalinfo").classList.remove("d-none");
+	document.getElementById("legalinfo").classList.add("d-block");
+	document.getElementById("settingsHide").classList.add("d-none");
 	document.getElementById("hidelegalbutton").value = "Show Settings";
 	}
 	legalInfo = !legalInfo;
@@ -125,6 +127,7 @@ function startTimer() {
 	document.getElementById("pauseButton").value = "Pause Timer";
 	document.getElementById("messageText").innerHTML = "";
 	document.getElementById("newListItemInput").value = "";
+	document.getElementById("timeremaining").classList.remove("timer-hint");
 	openFullscreen();
 	changeSettings();
 	document.getElementById("startButton").value = "Stop Timer";
@@ -192,6 +195,7 @@ function clearTimer () {
 		document.getElementById("timeremaining").style.opacity = 0;
 	setTimeout(function(){ 
 		document.getElementById("timeremaining").innerHTML = "Finished";
+		document.getElementById("timeremaining").classList.add("timer-hint");
 		document.getElementById("timeremaining").style.opacity = 1;
 	},500);
 	clearTimeout(drawTimer);
@@ -281,9 +285,11 @@ function updateTimer () {
 
 function changeSettings() {
 	if (showSettings) {
-		document.getElementById("settings").style.display = "none";
+		document.getElementById("settings").classList.add("d-none");
+		document.getElementById("settings").classList.remove("d-block");
 	} else {
-		document.getElementById("settings").style.display = "block";
+		document.getElementById("settings").classList.remove("d-none");
+		document.getElementById("settings").classList.add("d-block");
 	}
 	showSettings = !showSettings;
 };
@@ -331,19 +337,17 @@ function toggleTimerView() {
 }
 
 function hideAll () {
-		document.getElementById("left").style.width = "100vw"
-		document.getElementById("listDiv").style.display = "none"
-		document.getElementById("right").style.width = "0vw"
-		document.getElementById("left").style.width = "100vw"
+		document.getElementById("left").className = "col-12 vh-100 p-3"
+		document.getElementById("listDiv").classList.add("d-none")
+		document.getElementById("right").className = "d-none"
 }
 
 
 function resetDisplay (id) {
-		document.getElementById("right").style.width = "53vw"
-		document.getElementById("left").style.width = "43vw"
-		document.getElementById("left").style.height = "100vh"
-		document.getElementById("right").style.height = "100vh"	
-		document.getElementById("listDiv").style.display = "block"
+		document.getElementById("right").className = "col-6 vh-100 text-center position-relative"
+		document.getElementById("right").style.backgroundColor = "#2C3E50"
+		document.getElementById("left").className = "col-6 vh-100 p-3"
+		document.getElementById("listDiv").classList.remove("d-none")
 		if (listView) {
 			hideRight ()
 		}
@@ -353,16 +357,15 @@ function resetDisplay (id) {
 }
 
 function hideLeft () {
-	document.getElementById("right").style.width = "0vw"
-	document.getElementById("left").style.width = "100vw"
+	document.getElementById("right").className = "d-none"
+	document.getElementById("left").className = "col-12 vh-100 p-3"
 }
 
 function hideRight () {
-		document.getElementById("right").style.height = "100vh"
-		document.getElementById("right").style.width = "100vw"
-		document.getElementById("left").style.width = "100vw"
-		document.getElementById("left").style.height = "auto"
-		document.getElementById("listDiv").style.display = "none"	
+		document.getElementById("right").className = "col-12 vh-100 text-center position-relative"
+		document.getElementById("right").style.backgroundColor = "#2C3E50"
+		document.getElementById("left").className = "d-none"
+		document.getElementById("listDiv").classList.add("d-none")
 }
 
 
