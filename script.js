@@ -42,7 +42,13 @@ var loader = document.getElementById('loader'),
 var settingsTimeUpdate = setInterval(updateRemainingTime, 100);
    
 document.getElementById("daymonth").innerHTML = months[month] + " " + day;
-document.getElementById("year").innerHTML = year; 
+document.getElementById("year").innerHTML = year;
+
+if (navigator.userAgent.indexOf("Mac") !== -1) {
+	document.getElementById("fullscreenHint").innerHTML = "Toggle full screen: Command + Control + F";
+} else {
+	document.getElementById("fullscreenHint").innerHTML = "Toggle full screen: F11";
+}
 
 function pauseTimer() {
 	if (timerPaused) {
